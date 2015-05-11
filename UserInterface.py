@@ -18,9 +18,10 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # external import
-import gtk
 import os
 import pygtk
+import sys
+import gtk
 pygtk.require('2.0')
 # local import
 import AlarmThread
@@ -94,9 +95,9 @@ class UserInterface:
         # create a new window
         self.window_ = gtk.Window(gtk.WINDOW_TOPLEVEL)
         # Create a widget and put it on our main window;
-        self.vbox_ = gtk.VBox(False, 0)
-        self.window_.add(self.vbox_)
-        self.vbox_.show()
+        self.grid_ = gtk.Table(5,2)
+        self.window_.add(self.grid_)
+        self.grid_.show()
 
         # When the window is given the "delete_event" signal (this is given
         # by the window manager, usually by the "close" option, or on the
@@ -113,8 +114,8 @@ class UserInterface:
         # Sets the border width of the window.
         self.window_.set_border_width(10)
         self.window_.set_title("Alarm clock")
-        # set window size
-        self.window_.set_size_request(175, 200)
+        # set window size Width, Height
+        self.window_.set_size_request(200, 200)
         # set position on screen
         self.window_.set_position(gtk.WIN_POS_CENTER)
 
@@ -128,25 +129,25 @@ class UserInterface:
         # create spin buttons entries for hour and minute with respective labels
         config = Config.Config()
         config.loadConfig()
-        label = gtk.Label("Hour :")
-        label.show()
-        self.vbox_.add(label)
+        labelHour = gtk.Label("Hour :")
+        labelHour.show()
+        self.grid_.attach(labelHour, 0, 1, 1, 2)
         adj = gtk.Adjustment(config.getHour(), 0.0, 23.0, 1.0, 5.0, 0.0)
         self.spinnerHour_ = gtk.SpinButton(adj, 0, 0)
         self.spinnerHour_.set_wrap(True)
         self.spinnerHour_.set_numeric(True)
         self.spinnerHour_.show()
-        self.vbox_.add(self.spinnerHour_)
+        self.grid_.attach(self.spinnerHour_, 1, 2, 1, 2)
 
-        label = gtk.Label("Minute :")
-        label.show()
-        self.vbox_.add(label)
+        labelMinute = gtk.Label("Minute :")
+        labelMinute.show()
+        self.grid_.attach(labelMinute, 0 , 1, 2, 3)
         adj = gtk.Adjustment(config.getMinute(), 0.0, 59.0, 1.0, 5.0, 0.0)
         self.spinnerMinute_ = gtk.SpinButton(adj, 0, 0)
         self.spinnerMinute_.set_wrap(True)
         self.spinnerMinute_.set_numeric(True)
         self.spinnerMinute_.show()
-        self.vbox_.add(self.spinnerMinute_)
+        self.grid_.attach(self.spinnerMinute_, 1, 2, 2, 3)
 
 
         # Creates a new button with the label "Abort Alarm & Quit".
@@ -163,8 +164,8 @@ class UserInterface:
         self.buttonActivate_.connect("clicked", self.activateButtonCallBack, None)
 
         # This packs the buttons into the window (a GTK container).
-        self.vbox_.add(self.buttonAbort_)
-        self.vbox_.add(self.buttonActivate_)
+        self.grid_.attach(self.buttonAbort_, 0, 2, 3, 4)
+        self.grid_.attach(self.buttonActivate_, 0, 2, 4, 5)
 
         # The final step is to display this newly created widgets.
         self.buttonAbort_.show()
@@ -202,7 +203,7 @@ class UserInterface:
         # Insert ? in our menu
         menu.append(helpm)
         # Insert menu in the container widget
-        self.vbox_.add(menu)
+        self.grid_.attach(menu, 0, 2, 0, 1)
 
     # Defines the quit popup content
     def quitConfirmation( self, window, event ):
