@@ -29,7 +29,7 @@ import Config
 #
 # Defines what is an alarm:
 #
-class Alarm(Thread):
+class AlarmThread(Thread):
     # default constructor:
     def __init__(self):
         Thread.__init__(self)
@@ -69,7 +69,7 @@ class Alarm(Thread):
             hour = dt[3]
             minute = dt[4]
             # Check if it's time to wake up:
-            print "%d %d %d %d" % (hour,minute,self.hour_,self.minute_)
+            print(("%d %d %d %d" % (hour,minute,self.hour_,self.minute_)))
             if (hour == self.hour_) and (minute == self.minute_):
                 self.play()
                 return

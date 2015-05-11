@@ -19,7 +19,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # external import
-import ConfigParser
+# To be compatible with Python 2 and 3:
+import sys
+if sys.version_info < (3, 0):
+    import ConfigParser as configparser
+else:
+    import configparser
 import os
 
 class Config:
@@ -30,7 +35,7 @@ class Config:
         self.configFilename_ = "settings.ini"
         self.playlistFilename_ = "/playlist"
         # ConfigParser instance
-        self.config_ = ConfigParser.ConfigParser()
+        self.config_ = configparser.ConfigParser()
         # Default values that might be overwritten
         self.musicPath_ = os.path.expanduser("~/Music/")
         self.player_ = "mplayer -shuffle -playlist"
@@ -41,7 +46,7 @@ class Config:
     def createPlaylist(self):
         # create directory if not existing already
         if not os.path.exists(self.settingsPath_):
-            os.mkdir(self.settingsPath_, 0755)
+            os.mkdir(self.settingsPath_, 0o755)
         # Read config file if any:
         self.loadConfig()
         # create playlist:
@@ -51,7 +56,7 @@ class Config:
         #print args
         #p = subprocess.Popen(args)
         os.system(commandLine)
-        print commandLine
+        print(commandLine)
         return
 
     # Load config
@@ -89,6 +94,9 @@ class Config:
             self.config_.add_section("Alarm")
         self.config_.set("Alarm", "hour", self.hour_)
         self.config_.set("Alarm", "minute", self.minute_)
+        # create directory if not existing already
+        if not os.path.exists(self.settingsPath_):
+            os.mkdir(self.settingsPath_, 0o755)
         with open(self.settingsPath_ + "/" + self.configFilename_, 'wb') as configfileFd: self.config_.write(configfileFd)
 
     def getPlayerCommand(self):
